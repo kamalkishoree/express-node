@@ -4,6 +4,7 @@ const port = 5000;
 const db = require("./config/db.js");
 const bodyParser = require("body-parser");
 const personRoutes = require("./routes/personRoutes.js");
+const MenuItem = require("./routes/menuItemRoutes.js");
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
@@ -11,6 +12,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/person/", personRoutes);
+app.use("/menu/", MenuItem);
 
 app.listen(port, () => {
   console.log(` app listening on port ${port}`);

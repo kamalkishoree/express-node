@@ -4,6 +4,7 @@ const Person = require("../models/person");
 
 router.post("/create", async (req, res) => {
   try {
+    console.log(req.body);
     const request = req.body;
     const newPerson = new Person(request);
     console.log(newPerson);
