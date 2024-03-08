@@ -10,8 +10,6 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-//START -- Add Person API --//
-
 app.post("/person-add", async (req, res) => {
   try {
     const request = req.body;
@@ -27,9 +25,7 @@ app.post("/person-add", async (req, res) => {
     res.status(500).json({ error: "person not saved", status: 500 });
   }
 });
-//END -- Add Person API --//
 
-//Start -- Add Person API --//
 app.get("/persons", async (req, res) => {
   try {
     const all_persons = await Person.find();
@@ -42,24 +38,51 @@ app.get("/persons", async (req, res) => {
     res.status(500).json({ error: "person not find", status: 500 });
   }
 });
-//END -- find all Person API --//
 
-//Start -- find  Person with id API --//
-app.get("/persons/:id", async (req, res) => {
+app.get("/person/:id", async (req, res) => {
   try {
-    console.log(res.body);
-    const persons = await Person.find({ userId: userid });
-    console.log(persons);
-    res
-      .status(200)
-      .json({ message: "person find successfully", data: all_persons });
+    const person_data = await Person.findById(req.params.id);
+    if (!person_data) {
+      return res.status(404).json({ message: "person not found" });
+    }
+    res.json(person_data);
   } catch (err) {
-    console.log("not find");
-    res.status(500).json({ error: "person not find", status: 500 });
+    res.status(500).json({ message: err.message });
   }
 });
-//End -- find  Person with id API --//
+
+// Update User by ID
+app.patch("/person-update/:id", async (req, res) => {
+  try {
+    const person_data = await Person.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+    if (!person_data) {
+      return res.status(404).json({ message: "person not found" });
+    }
+    res.json({ message: "Person updated", person_data });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+app.delete("/person-delete/:id", async (req, res) => {
+  try {
+    const person_data = await Person.findByIdAndDelete(req.params.id);
+    if (!person_data) {
+      return res.status(404).json({ message: "Person not found" });
+    }
+    res.json({ message: "Person deleted" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(` app listening on port ${port}`);
 });
