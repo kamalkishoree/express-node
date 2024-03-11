@@ -2,53 +2,6 @@ const express = require("express");
 const router = express.Router();
 const Person = require("../models/person");
 const { jwtAuthMiddleware, generateToken } = require("../config/JWT");
-router.post("/signup", async (req, res) => {
-  try {
-    console.log(req.body);
-    const request = req.body;
-    const newPerson = new Person(request);
-    console.log(newPerson);
-    const Savedperson = await newPerson.save();
-    console.log("data save");
-    const token = generateToken({
-      id: Savedperson.id,
-      username: Savedperson.username,
-    });
-    console.log("token is :", token);
-
-    res.status(200).json({
-      message: "person saved successfully",
-      data: Savedperson,
-      token: token,
-    });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({
-      error: "internal server error  not saved ",
-      msg: err,
-      status: 500,
-    });
-  }
-});
-
-router.post("/login", async (req, res, next) => {
-  const { req_username, req_password } = req.body;
-  try {
-    const user = Person.findOne({ username: req_username });
-    if (!user) {
-      res.status(401).json({ message: "invalid username" });
-    }
-
-    const payload = {
-      id: user.id,
-      username: user.username,
-    };
-    const token = generateToken(payload);
-    res.status(200).json({ token: token, message: "Login successfully" });
-  } catch (err) {
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
 
 router.post("/create", async (req, res) => {
   try {
